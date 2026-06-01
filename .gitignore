@@ -1,3 +1,12 @@
-# Симлинк на mock/node_modules, нужный компилятору TypeSpec для резолва
-# импортов из api.tsp (см. mock/scripts/link-modules.mjs).
-/node_modules
+# Зависимости
+**/node_modules
+
+# Окружение и секреты
+**/.env
+*.local
+
+# Артефакты сборки
+**/*.tsbuildinfo
+
+# Прочее
+**/.DS_Store

@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 import {
+  ensureEventType,
   fillGuestFormAndSubmit,
   gotoEventTypes,
+  INTRO_CALL,
   pickFirstFreeSlot,
   selectCalendarDay,
   tomorrowUtc,
@@ -16,7 +18,12 @@ import {
  * и пересчитывает слоты — поэтому путь действительно проходит end-to-end.
  */
 
-const EVENT_TYPE_NAME = 'Вводный звонок';
+const EVENT_TYPE_NAME = INTRO_CALL.name;
+
+// Хранилище бэкенда стартует пустым — создаём нужный тип события перед тестами.
+test.beforeEach(async ({ page }) => {
+  await ensureEventType(page);
+});
 
 test('гость бронирует слот: лендинг → выбор слота → успех', async ({ page }) => {
   const guestName = 'Иван Тестовый';

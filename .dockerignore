@@ -1,0 +1,34 @@
+# VCS
+.git
+.gitignore
+
+# Зависимости и виртуальные окружения
+**/node_modules
+node_modules
+backend/.venv
+
+# Артефакты сборки
+frontend/dist
+frontend/dist-ssr
+**/*.tsbuildinfo
+
+# Окружение и секреты
+**/.env
+*.local
+
+# Тесты / отчёты
+frontend/test-results
+frontend/playwright-report
+frontend/blob-report
+frontend/playwright/.cache
+frontend/e2e
+
+# Кеши Python
+**/__pycache__
+**/*.pyc
+
+# Прочее
+**/.DS_Store
+Dockerfile
+.dockerignore
+README.md

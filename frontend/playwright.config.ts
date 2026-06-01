@@ -51,7 +51,7 @@ export default defineConfig({
       // Бэкенд: авто-установка зависимостей + запуск Flask.
       command: 'bash ./e2e/scripts/start-backend.sh',
       env: { FLASK_PORT: String(BACKEND_PORT) },
-      url: `${API_URL}/event-types`,
+      url: `${API_URL}/api/event-types`,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       stdout: 'pipe',
@@ -59,8 +59,9 @@ export default defineConfig({
     },
     {
       // Фронтенд: Vite dev-сервер, направленный на реальный бэкенд.
+      // VITE_API_URL — полный базовый URL API (origin + /api), как в проде.
       command: 'npm run dev',
-      env: { VITE_API_URL: API_URL },
+      env: { VITE_API_URL: `${API_URL}/api` },
       url: BASE_URL,
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,

@@ -36,7 +36,7 @@ Playwright сам поднимает оба сервера (`webServer` в `play
 
 - **бэкенд** — `e2e/scripts/start-backend.sh` создаёт `backend/.venv` (если нет),
   ставит зависимости из `requirements.txt` и запускает Flask на `:3000`;
-- **фронтенд** — `npm run dev` (Vite на `:5173`) с `VITE_API_URL=http://localhost:3000`.
+- **фронтенд** — `npm run dev` (Vite на `:5173`) с `VITE_API_URL=http://localhost:3000/api`.
 
 Полезное:
 

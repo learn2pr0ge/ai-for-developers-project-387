@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 import {
+  ensureEventType,
   fillGuestFormAndSubmit,
   gotoEventTypes,
+  INTRO_CALL,
   pickFirstFreeSlot,
   selectCalendarDay,
   tomorrowUtc,
@@ -13,7 +15,12 @@ import {
  * Сценарий 3 — админ отменяет бронь, строка исчезает.
  */
 
-const EVENT_TYPE_NAME = 'Вводный звонок';
+const EVENT_TYPE_NAME = INTRO_CALL.name;
+
+// Хранилище бэкенда стартует пустым — создаём нужный тип события перед тестами.
+test.beforeEach(async ({ page }) => {
+  await ensureEventType(page);
+});
 
 /** Создаёт бронь через гостевой флоу и возвращает email гостя. */
 async function createBooking(page: import('@playwright/test').Page): Promise<string> {

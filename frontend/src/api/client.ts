@@ -1,7 +1,10 @@
 import axios, { AxiosError } from 'axios';
 import type { ErrorResponse } from '../types';
 
-const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+// Бэкенд раздаёт REST API под префиксом /api (см. backend app/__init__.py).
+// VITE_API_URL задаёт полный базовый URL API, уже включая /api
+// (dev: http://localhost:3000/api, docker: /api). Пути в src/api/* — без /api.
+const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
 export const apiClient = axios.create({
   baseURL,

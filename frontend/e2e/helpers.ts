@@ -8,6 +8,42 @@ import { expect, type Page } from '@playwright/test';
  * Поэтому «локальный» день в браузере совпадает с UTC-днём.
  */
 
+/**
+ * Базовый URL API для прямых запросов из тестов (origin + /api).
+ * VITE_API_URL уже включает префикс /api (см. playwright.config.ts), поэтому
+ * пути ниже добавляются без повторного /api.
+ */
+const API_BASE = process.env.VITE_API_URL ?? 'http://localhost:3000/api';
+
+/** Тип события, на котором строятся e2e-сценарии. */
+export const INTRO_CALL = {
+  id: 'intro-call',
+  name: 'Вводный звонок',
+  description: '30-минутное знакомство',
+  duration: 30,
+};
+
+/**
+ * Идемпотентно создаёт тип события через admin API.
+ *
+ * Хранилище бэкенда стартует пустым, поэтому перед сценариями нужно создать
+ * тип события самим тестом. 409 (уже существует) игнорируется — это покрывает
+ * переиспользование backend между локальными прогонами (reuseExistingServer).
+ *
+ * Запрос идёт абсолютным URL на backend (:3000): page.request использует
+ * baseURL фронтенда (:5173), поэтому путь нельзя оставлять относительным.
+ */
+export async function ensureEventType(page: Page, et = INTRO_CALL): Promise<void> {
+  const res = await page.request.post(`${API_BASE}/admin/event-types`, {
+    data: et,
+  });
+  if (!res.ok() && res.status() !== 409) {
+    throw new Error(
+      `ensureEventType failed: ${res.status()} ${await res.text()}`,
+    );
+  }
+}
+
 /** Завтрашний день в UTC — гарантированно внутри окна 14 дней и без «прошедших» слотов. */
 export function tomorrowUtc(): Date {
   const now = new Date();
