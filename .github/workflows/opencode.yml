@@ -28,8 +28,6 @@ jobs:
       - name: Run opencode
         uses: sst/opencode/github@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
         with:
           model: opencode/qwen3-6-plus
-          use_github_token: true
