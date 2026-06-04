@@ -25,7 +25,8 @@ def list_bookings():
     date_from = parse_query_date(request.args.get("from"))
     date_to = parse_query_date(request.args.get("to"))
 
-    items = list(store.bookings.values())
+    with store.lock:
+        items = list(store.bookings.values())
 
     if event_type_id:
         items = [b for b in items if b["event_type_id"] == event_type_id]
@@ -47,7 +48,8 @@ def list_bookings():
 
 @admin_bookings_bp.get("/admin/bookings/<booking_id>")
 def get_booking(booking_id: str):
-    b = store.bookings.get(booking_id)
+    with store.lock:
+        b = store.bookings.get(booking_id)
     if b is None:
         raise not_found(f"Бронирование '{booking_id}' не найдено")
     return jsonify(booking_to_dict(b)), 200
@@ -55,7 +57,8 @@ def get_booking(booking_id: str):
 
 @admin_bookings_bp.delete("/admin/bookings/<booking_id>")
 def cancel_booking(booking_id: str):
-    if booking_id not in store.bookings:
-        raise not_found(f"Бронирование '{booking_id}' не найдено")
-    del store.bookings[booking_id]
+    with store.lock:
+        if booking_id not in store.bookings:
+            raise not_found(f"Бронирование '{booking_id}' не найдено")
+        del store.bookings[booking_id]
     return "", 204

@@ -55,7 +55,7 @@ def is_start_within_window(start_dt: datetime) -> bool:
 
 def is_slot_free(start_time: datetime, end_time: datetime) -> bool:
     """Свободен ли интервал [start, end) — нет пересечений с бронированиями."""
-    for b in store.bookings.values():
+    for b in list(store.bookings.values()):
         if start_time < b["end_time"] and b["start_time"] < end_time:
             return False
     return True
