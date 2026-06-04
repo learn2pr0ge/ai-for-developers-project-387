@@ -5,6 +5,7 @@ import { ru } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { useEventType } from '../../hooks/useEventTypes';
 import { useSlots } from '../../hooks/useSlots';
+import { useSlotCounts } from '../../hooks/useSlotCounts';
 import { useCreateBooking } from '../../hooks/useBookings';
 import { DateStrip } from '../../components/DateStrip';
 import { SlotGrid } from '../../components/SlotGrid';
@@ -13,9 +14,7 @@ import {
   type GuestBookingFormValues,
 } from '../../components/GuestBookingForm';
 import {
-  buildBookingWindow,
   buildDayGrid,
-  countAvailableForDay,
   toApiDate,
   type GridSlot,
 } from '../../lib/slots';
@@ -37,18 +36,8 @@ export function SlotPickerPage() {
 
   const apiDate = selectedDate ? toApiDate(selectedDate) : undefined;
   const { data: slots, isLoading: isSlotsLoading } = useSlots(eventTypeId, apiDate);
+  const { freeCounts } = useSlotCounts(eventTypeId);
   const createBooking = useCreateBooking();
-
-  // Свободные слоты по дням для подсказок «N св.» в календаре.
-  const windowDays = useMemo(() => buildBookingWindow(), []);
-  const freeCounts = useMemo<Record<string, number>>(() => {
-    if (!slots) return {};
-    const counts: Record<string, number> = {};
-    for (const day of windowDays) {
-      counts[format(day, 'yyyy-MM-dd')] = countAvailableForDay(slots, day);
-    }
-    return counts;
-  }, [slots, windowDays]);
 
   // Полная сетка 09:00–18:00 с шагом duration для выбранного дня.
   const dayGrid = useMemo<GridSlot[]>(() => {
