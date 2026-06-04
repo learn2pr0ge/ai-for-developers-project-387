@@ -28,6 +28,19 @@ guest_bookings_bp = Blueprint("guest_bookings", __name__)
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
+def _is_valid_email(email: str) -> bool:
+    if not _EMAIL_RE.match(email):
+        return False
+    if ".." in email:
+        return False
+    if "@." in email:
+        return False
+    domain = email.split("@")[1]
+    if re.match(r"^\d+\.\d+\.\d+\.\d+$", domain):
+        return False
+    return True
+
+
 @guest_bookings_bp.post("/bookings")
 def create_booking():
     body = request.get_json(silent=True)
@@ -44,7 +57,7 @@ def create_booking():
         raise unprocessable("eventTypeId обязателен")
     if not isinstance(guest_name, str) or not guest_name.strip():
         raise unprocessable("guestName обязателен")
-    if not isinstance(guest_email, str) or not _EMAIL_RE.match(guest_email):
+    if not isinstance(guest_email, str) or not _is_valid_email(guest_email):
         raise unprocessable("guestEmail имеет некорректный формат")
 
     start_time = parse_iso_utc(start_time_raw)
