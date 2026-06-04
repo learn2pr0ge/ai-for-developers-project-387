@@ -41,3 +41,29 @@ jobs:
             lhci_reports/
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report-${{ github.run_number }}
+          path: |
+            **/.lighthouseci/**
+            .lighthouseci/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Copy reports to workspace root
+        if: always()
+        run: |
+          mkdir -p reports
+          cp -r .lighthouseci/* reports/ 2>/dev/null || true
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report-${{ github.run_number }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
