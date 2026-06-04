@@ -18,7 +18,8 @@ guest_slots_bp = Blueprint("guest_slots", __name__)
 
 @guest_slots_bp.get("/event-types/<event_type_id>/slots")
 def list_slots(event_type_id: str):
-    et = store.event_types.get(event_type_id)
+    with store.lock:
+        et = store.event_types.get(event_type_id)
     if et is None:
         raise not_found(f"Тип события '{event_type_id}' не найден")
 

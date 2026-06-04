@@ -50,7 +50,8 @@ def create_booking():
     start_time = parse_iso_utc(start_time_raw)
 
     # Существование типа события (404).
-    event_type = store.event_types.get(event_type_id)
+    with store.lock:
+        event_type = store.event_types.get(event_type_id)
     if event_type is None:
         raise not_found(f"Тип события '{event_type_id}' не найден")
 
@@ -68,21 +69,22 @@ def create_booking():
     start_time = start_time.replace(microsecond=0)
     end_time = start_time + timedelta(minutes=duration)
 
-    # Конфликт слота (409).
-    if not is_slot_free(start_time, end_time):
-        raise conflict("Временной слот уже занят")
+    # Конфликт слота (409) — атомарная проверка + запись.
+    with store.lock:
+        if not is_slot_free(start_time, end_time):
+            raise conflict("Временной слот уже занят")
 
-    booking = {
-        "id": str(uuid.uuid4()),
-        "event_type_id": event_type["id"],
-        "event_type_name": event_type["name"],
-        "event_type_duration": duration,
-        "guest_name": guest_name.strip(),
-        "guest_email": guest_email,
-        "start_time": start_time,
-        "end_time": end_time,
-        "created_at": now_utc().replace(microsecond=0),
-    }
-    store.bookings[booking["id"]] = booking
+        booking = {
+            "id": str(uuid.uuid4()),
+            "event_type_id": event_type["id"],
+            "event_type_name": event_type["name"],
+            "event_type_duration": duration,
+            "guest_name": guest_name.strip(),
+            "guest_email": guest_email,
+            "start_time": start_time,
+            "end_time": end_time,
+            "created_at": now_utc().replace(microsecond=0),
+        }
+        store.bookings[booking["id"]] = booking
 
     return jsonify(booking_to_dict(booking)), 201
