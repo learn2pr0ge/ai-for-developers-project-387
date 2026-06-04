@@ -1,0 +1,37 @@
+name: Lighthouse Audit
+
+on:
+  # Запуск по расписанию — каждую ночь в 02:00 UTC (05:00 МСК)
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Ручной запуск из вкладки Actions
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.15.x
+
+      - name: Run Lighthouse
+        run: lhci autorun --config=lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()   # сохранять даже если аудит не прошёл пороги
+        with:
+          name: lighthouse-report-${{ github.run_number }}
+          path: .lighthouseci/
+          retention-days: 30   # отчёт хранится 30 дней

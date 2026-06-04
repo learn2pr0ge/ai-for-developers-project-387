@@ -1,0 +1,13 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "https://learn2pr0ge.github.io/ai-for-developers-project-387/"
+      ],
+      "numberOfRuns": 1
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
