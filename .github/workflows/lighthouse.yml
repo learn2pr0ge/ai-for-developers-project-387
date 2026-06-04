@@ -1,11 +1,8 @@
 name: Lighthouse Audit
 
 on:
-  # Запуск по расписанию — каждую ночь в 02:00 UTC (05:00 МСК)
   schedule:
     - cron: '0 2 * * *'
-
-  # Ручной запуск из вкладки Actions
   workflow_dispatch:
 
 jobs:
@@ -28,10 +25,19 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
+      - name: Show report path
+        if: always()
+        run: |
+          ls -la .lighthouseci/ || echo "Directory not found, searching..."
+          find . -name "*.html" -o -name "manifest.json" 2>/dev/null
+
       - name: Upload Lighthouse report
         uses: actions/upload-artifact@v4
-        if: always()   # сохранять даже если аудит не прошёл пороги
+        if: always()
         with:
           name: lighthouse-report-${{ github.run_number }}
-          path: .lighthouseci/
-          retention-days: 30   # отчёт хранится 30 дней
+          path: |
+            .lighthouseci/
+            lhci_reports/
+          if-no-files-found: warn
+          retention-days: 30

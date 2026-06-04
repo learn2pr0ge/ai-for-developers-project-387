@@ -4,7 +4,10 @@
       "url": [
         "https://github.com/learn2pr0ge/ai-for-developers-project-387"
       ],
-      "numberOfRuns": 1
+      "numberOfRuns": 1,
+      "settings": {
+        "chromeFlags": "--no-sandbox --headless"
+      }
     },
     "upload": {
       "target": "temporary-public-storage"
