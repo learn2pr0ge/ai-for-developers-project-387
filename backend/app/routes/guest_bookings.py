@@ -35,6 +35,8 @@ def _is_valid_email(email: str) -> bool:
         return False
     if "@." in email:
         return False
+    if "#" in email:
+        return False
     domain = email.split("@")[1]
     if re.match(r"^\d+\.\d+\.\d+\.\d+$", domain):
         return False
