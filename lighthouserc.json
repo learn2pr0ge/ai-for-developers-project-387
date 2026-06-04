@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "url": [
-        "https://learn2pr0ge.github.io/ai-for-developers-project-387/"
+        "https://github.com/learn2pr0ge/ai-for-developers-project-387"
       ],
       "numberOfRuns": 1
     },
