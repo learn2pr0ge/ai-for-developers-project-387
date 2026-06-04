@@ -25,7 +25,7 @@ from ..serialization import parse_iso_utc
 
 guest_bookings_bp = Blueprint("guest_bookings", __name__)
 
-_EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$")
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 @guest_bookings_bp.post("/bookings")
